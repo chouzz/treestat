@@ -2,7 +2,7 @@ use std::collections::{BTreeSet, HashMap};
 use std::path::PathBuf;
 
 use treestat::cli::HeaderMode;
-use treestat::lang::apply_header_mode;
+use treestat::lang::{apply_header_mode, build_extensions, canonical_language_name};
 use treestat::model::DirData;
 use treestat::scanner::compute_tree_counts;
 
@@ -50,4 +50,21 @@ fn aggregate_counts() {
     let counts = compute_tree_counts(&root, &dirs);
     assert_eq!(counts.get(&root), Some(&3));
     assert_eq!(counts.get(&child), Some(&2));
+}
+
+#[test]
+fn linguist_alias_and_multi_lang_extensions() {
+    assert_eq!(canonical_language_name("cpp").as_deref(), Some("c++"));
+
+    let exts = build_extensions(
+        &["c".to_string(), "cpp".to_string()],
+        &[],
+        HeaderMode::Include,
+    )
+    .expect("language aliases should resolve");
+    assert!(exts.contains("c"));
+    assert!(exts.contains("cpp"));
+    assert!(exts.contains("cc"));
+    assert!(exts.contains("h"));
+    assert!(exts.contains("hpp"));
 }

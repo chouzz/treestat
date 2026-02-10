@@ -1,8 +1,6 @@
 use std::env;
 use std::path::PathBuf;
 
-use crate::lang::Lang;
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Format {
     Text,
@@ -25,7 +23,7 @@ pub enum HeaderMode {
 #[derive(Debug)]
 pub struct Cli {
     pub path: PathBuf,
-    pub lang: Option<Lang>,
+    pub langs: Vec<String>,
     pub ext: Vec<String>,
     pub headers: HeaderMode,
     pub count_mode: CountMode,
@@ -47,7 +45,7 @@ impl Cli {
 
     pub fn parse(args: Vec<String>) -> Result<Self, String> {
         let mut path: Option<PathBuf> = None;
-        let mut lang = None;
+        let mut langs = vec![];
         let mut ext = vec![];
         let mut headers = HeaderMode::Include;
         let mut count_mode = CountMode::Tree;
@@ -70,7 +68,7 @@ impl Cli {
                 "--lang" => {
                     i += 1;
                     let v = args.get(i).ok_or("--lang requires a value")?;
-                    lang = Some(parse_lang(v)?);
+                    langs.extend(parse_langs(v));
                 }
                 "--ext" => {
                     i += 1;
@@ -130,7 +128,7 @@ impl Cli {
 
         Ok(Self {
             path: path.unwrap_or_else(|| PathBuf::from(".")),
-            lang,
+            langs,
             ext,
             headers,
             count_mode,
@@ -152,19 +150,12 @@ fn parse_usize(v: &str, field: &str) -> Result<usize, String> {
         .map_err(|_| format!("invalid {field}: {v}"))
 }
 
-fn parse_lang(v: &str) -> Result<Lang, String> {
-    match v.to_ascii_lowercase().as_str() {
-        "c" => Ok(Lang::C),
-        "cpp" => Ok(Lang::Cpp),
-        "python" => Ok(Lang::Python),
-        "rust" => Ok(Lang::Rust),
-        "go" => Ok(Lang::Go),
-        "java" => Ok(Lang::Java),
-        "js" => Ok(Lang::Js),
-        "ts" => Ok(Lang::Ts),
-        "all" => Ok(Lang::All),
-        _ => Err(format!("invalid --lang value: {v}")),
-    }
+fn parse_langs(v: &str) -> Vec<String> {
+    v.split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+        .collect()
 }
 
 fn parse_headers(v: &str) -> Result<HeaderMode, String> {
@@ -194,6 +185,6 @@ fn parse_format(v: &str) -> Result<Format, String> {
 
 pub fn print_help() {
     println!(
-        "treestat [PATH] [OPTIONS]\n\nOptions:\n  --lang <c|cpp|python|rust|go|java|js|ts|all>\n  --ext <a,b,c>\n  --headers <include|exclude|only>\n  --count-mode <direct|tree>\n  --max-depth <N>\n  --min-count <N>\n  --show-empty\n  --follow-symlinks\n  --exclude <PATTERN> (repeatable)\n  --no-gitignore\n  --hidden\n  --format <text|json>\n  --json-pretty\n  -h, --help\n  -V, --version"
+        "treestat [PATH] [OPTIONS]\n\nOptions:\n  --lang <LANG[,LANG...]> (repeatable, aliases from Linguist)\n  --ext <a,b,c>\n  --headers <include|exclude|only>\n  --count-mode <direct|tree>\n  --max-depth <N>\n  --min-count <N>\n  --show-empty\n  --follow-symlinks\n  --exclude <PATTERN> (repeatable)\n  --no-gitignore\n  --hidden\n  --format <text|json>\n  --json-pretty\n  -h, --help\n  -V, --version"
     );
 }

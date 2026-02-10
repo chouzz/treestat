@@ -20,7 +20,7 @@ pub fn run(cli: Cli) -> Result<String, String> {
         return Err(format!("path is not a directory: {}", root.display()));
     }
 
-    let extensions = build_extensions(cli.lang, &cli.ext, cli.headers);
+    let extensions = build_extensions(&cli.langs, &cli.ext, cli.headers)?;
     if extensions.is_empty() {
         return Err("no extensions selected; provide --lang or --ext".to_string());
     }
@@ -35,12 +35,12 @@ pub fn run(cli: Cli) -> Result<String, String> {
     let tree_counts = compute_tree_counts(Path::new(&scan.root), &scan.dirs);
 
     let output = match cli.format {
-        Format::Text => render_text(&scan, &tree_counts, &extensions, cli.lang, &cli),
+        Format::Text => render_text(&scan, &tree_counts, &extensions, &cli.langs, &cli),
         Format::Json => render_json(
             &scan,
             &tree_counts,
             &extensions,
-            cli.lang,
+            &cli.langs,
             &cli,
             cli.json_pretty,
         ),

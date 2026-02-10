@@ -1,0 +1,75 @@
+C:
+  type: programming
+  aliases:
+    - c
+  extensions:
+    - .c
+    - .h
+C++:
+  type: programming
+  aliases:
+    - cpp
+    - c++
+  extensions:
+    - .cc
+    - .cp
+    - .cpp
+    - .cxx
+    - .c++
+    - .h
+    - .hh
+    - .hpp
+    - .hxx
+    - .h++
+    - .ipp
+    - .ixx
+    - .inl
+Python:
+  type: programming
+  aliases:
+    - py
+    - python
+  extensions:
+    - .py
+    - .pyi
+Rust:
+  type: programming
+  aliases:
+    - rs
+    - rust
+  extensions:
+    - .rs
+Go:
+  type: programming
+  aliases:
+    - golang
+    - go
+  extensions:
+    - .go
+Java:
+  type: programming
+  aliases:
+    - java
+  extensions:
+    - .java
+JavaScript:
+  type: programming
+  aliases:
+    - js
+    - javascript
+    - node
+  extensions:
+    - .js
+    - .mjs
+    - .cjs
+    - .jsx
+TypeScript:
+  type: programming
+  aliases:
+    - ts
+    - typescript
+  extensions:
+    - .ts
+    - .mts
+    - .cts
+    - .tsx

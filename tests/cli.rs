@@ -71,3 +71,46 @@ fn json_output_shape() {
 
     let _ = fs::remove_dir_all(root);
 }
+
+#[test]
+fn multi_language_count_includes_c_cpp_and_headers() {
+    let root = make_temp_dir();
+    write(
+        &root.join("src/a.c"),
+        "int main() { return 0; }
+",
+    );
+    write(
+        &root.join("src/b.cpp"),
+        "int x = 0;
+",
+    );
+    write(
+        &root.join("include/a.h"),
+        "#pragma once
+",
+    );
+    write(
+        &root.join("include/b.hpp"),
+        "#pragma once
+",
+    );
+    write(
+        &root.join("src/ignore.py"),
+        "print(1)
+",
+    );
+
+    let out = Command::new(bin_path())
+        .arg(&root)
+        .arg("--lang")
+        .arg("c,cpp")
+        .output()
+        .unwrap();
+
+    assert!(out.status.success());
+    let s = String::from_utf8_lossy(&out.stdout);
+    assert!(s.contains("Total matching files: 4"));
+
+    let _ = fs::remove_dir_all(root);
+}

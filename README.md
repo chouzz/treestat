@@ -15,7 +15,7 @@ cargo install treestat
 ## Quick Start
 
 ```bash
-treestat . --lang cpp
+treestat . --lang c,cpp
 ```
 
 ```bash
@@ -37,7 +37,7 @@ treestat [PATH] [OPTIONS]
 ```
 
 - `PATH`: target directory (default: `.`)
-- `--lang <c|cpp|python|rust|go|java|js|ts|all>`: language preset
+- `--lang <LANG[,LANG...]>`: language preset(s) from embedded Linguist data (repeatable, aliases supported)
 - `--ext <LIST>`: custom extensions (comma-separated, supports `rs` or `.rs`)
 - `--headers <include|exclude|only>`: header-file policy (default: `include`)
 - `--count-mode <direct|tree>`: counting mode (default: `tree`)
@@ -66,7 +66,7 @@ treestat [PATH] [OPTIONS]
   "root": "project",
   "path": "/abs/path/project",
   "count_mode": "tree",
-  "lang": "cpp",
+  "lang": "c,c++",
   "extensions": ["c", "cc", "cpp", "cxx", "h", "hh", "hpp", "hxx"],
   "max_depth": 3,
   "total_files": 333,

@@ -3,7 +3,7 @@ use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 
 use crate::cli::{Cli, CountMode};
-use crate::lang::Lang;
+use crate::lang::display_langs;
 use crate::model::ScanResult;
 
 fn display_count(
@@ -51,14 +51,11 @@ pub fn render_text(
     scan: &ScanResult,
     tree_counts: &HashMap<PathBuf, usize>,
     extensions: &HashSet<String>,
-    lang: Option<Lang>,
+    langs: &[String],
     cli: &Cli,
 ) -> String {
     let mut out = String::new();
-    let title = match lang {
-        Some(v) => format!("{:?} file statistics (Tree View):", v),
-        None => "Custom extension file statistics (Tree View):".to_string(),
-    };
+    let title = format!("{} file statistics (Tree View):", display_langs(langs));
 
     out.push_str(&title);
     out.push('\n');
@@ -153,7 +150,7 @@ pub fn render_json(
     scan: &ScanResult,
     tree_counts: &HashMap<PathBuf, usize>,
     extensions: &HashSet<String>,
-    lang: Option<Lang>,
+    langs: &[String],
     cli: &Cli,
     pretty: bool,
 ) -> String {
@@ -218,9 +215,7 @@ pub fn render_json(
             .collect::<Vec<_>>()
             .join(",")
     };
-    let lang_str = lang
-        .map(|l| format!("{:?}", l).to_ascii_lowercase())
-        .unwrap_or_else(|| "custom".to_string());
+    let lang_str = display_langs(langs);
 
     if pretty {
         format!(
