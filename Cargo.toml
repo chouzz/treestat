@@ -1,0 +1,8 @@
+[package]
+name = "treestat"
+version = "0.1.0"
+edition = "2024"
+description = "A tree-style CLI that counts language-selected source files per directory"
+license = "MIT"
+
+[dependencies]
