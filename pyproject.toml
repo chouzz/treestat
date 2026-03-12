@@ -4,11 +4,11 @@ build-backend = "maturin"
 
 [project]
 name = "treestat-cli"
-version = "0.1.0"
+version = "1.0.0"
 description = "A CLI that displays source file counts in a tree view by directory and language"
 readme = "README.md"
 requires-python = ">=3.8"
-license = { text = "MIT" }
+license = { file = "MIT" }
 authors = [
   { name = "chouzz" }
 ]
@@ -19,6 +19,11 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
+
+[project.urls]
+Homepage = "https://github.com/chouzz/treestat"
+Repository = "https://github.com/chouzz/treestat"
+Issues = "https://github.com/chouzz/treestat/issues"
 
 [tool.maturin]
 bindings = "bin"

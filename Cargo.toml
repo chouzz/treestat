@@ -1,8 +1,15 @@
 [package]
 name = "treestat"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 description = "A CLI that displays source file counts in a tree view by directory and language"
 license = "MIT"
+readme = "README.md"
+authors = ["chouzz"]
+repository = "https://github.com/chouzz/treestat"
+homepage = "https://github.com/chouzz/treestat"
+documentation = "https://docs.rs/treestat"
+keywords = ["cli", "code", "tree", "stats"]
+categories = ["command-line-utilities", "development-tools::build-utils"]
 
 [dependencies]

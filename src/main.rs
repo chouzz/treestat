@@ -17,7 +17,7 @@ fn main() {
                 return;
             }
             if msg == "--version" {
-                println!("treestat 0.1.0");
+                println!("treestat 1.0.0");
                 return;
             }
             eprintln!("error: {msg}");
