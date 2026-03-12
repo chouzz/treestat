@@ -101,10 +101,6 @@ pub fn scan_tree(
             }
 
             if ft.is_dir() {
-                if ctx.cli.max_depth.is_some_and(|max| depth + 1 > max) {
-                    continue;
-                }
-
                 ctx.dirs.entry(path.clone()).or_insert_with(|| DirData {
                     name: path
                         .file_name()

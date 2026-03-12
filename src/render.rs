@@ -18,8 +18,9 @@ fn display_count(
     }
 }
 
-fn should_show(
+fn should_show_at_depth(
     path: &Path,
+    depth: usize,
     scan: &ScanResult,
     tree_counts: &HashMap<PathBuf, usize>,
     cli: &Cli,
@@ -40,10 +41,15 @@ fn should_show(
         return true;
     }
 
+    if cli.max_depth.is_some_and(|max| depth >= max) {
+        // We can't show deeper levels, so keep this node if it has any matching descendants.
+        return subtree > 0;
+    }
+
     scan.dirs.get(path).is_some_and(|d| {
         d.children
             .iter()
-            .any(|c| should_show(c, scan, tree_counts, cli))
+            .any(|c| should_show_at_depth(c, depth + 1, scan, tree_counts, cli))
     })
 }
 
@@ -77,7 +83,7 @@ pub fn render_text(
         .unwrap_or_default();
     let visible = children
         .into_iter()
-        .filter(|c| should_show(c, scan, tree_counts, cli))
+        .filter(|c| should_show_at_depth(c, 1, scan, tree_counts, cli))
         .collect::<Vec<_>>();
     for (idx, child) in visible.iter().enumerate() {
         render_text_node(
@@ -88,6 +94,7 @@ pub fn render_text(
             cli,
             "",
             idx + 1 == visible.len(),
+            1,
         );
     }
 
@@ -111,6 +118,7 @@ fn render_text_node(
     cli: &Cli,
     prefix: &str,
     is_last: bool,
+    depth: usize,
 ) {
     let Some(dir) = scan.dirs.get(path) else {
         return;
@@ -122,6 +130,10 @@ fn render_text_node(
         display_count(path, scan, tree_counts, cli.count_mode)
     ));
 
+    if cli.max_depth.is_some_and(|max| depth >= max) {
+        return;
+    }
+
     let next_prefix = if is_last {
         format!("{prefix}    ")
     } else {
@@ -130,7 +142,7 @@ fn render_text_node(
     let children = dir
         .children
         .iter()
-        .filter(|c| should_show(c, scan, tree_counts, cli))
+        .filter(|c| should_show_at_depth(c, depth + 1, scan, tree_counts, cli))
         .cloned()
         .collect::<Vec<_>>();
     for (idx, child) in children.iter().enumerate() {
@@ -142,6 +154,7 @@ fn render_text_node(
             cli,
             &next_prefix,
             idx + 1 == children.len(),
+            depth + 1,
         );
     }
 }
@@ -161,18 +174,30 @@ pub fn render_json(
         cli: &Cli,
         pretty: bool,
         indent: usize,
+        depth: usize,
     ) -> String {
         let d = scan.dirs.get(path).expect("node exists");
-        let children = d
-            .children
-            .iter()
-            .filter(|c| should_show(c, scan, tree_counts, cli))
-            .cloned()
-            .collect::<Vec<_>>();
+        let children = if cli.max_depth.is_some_and(|max| depth >= max) {
+            vec![]
+        } else {
+            d.children
+                .iter()
+                .filter(|c| should_show_at_depth(c, depth + 1, scan, tree_counts, cli))
+                .cloned()
+                .collect::<Vec<_>>()
+        };
 
         let mut child_json = vec![];
         for child in &children {
-            child_json.push(node(child, scan, tree_counts, cli, pretty, indent + 2));
+            child_json.push(node(
+                child,
+                scan,
+                tree_counts,
+                cli,
+                pretty,
+                indent + 2,
+                depth + 1,
+            ));
         }
         let pad = if pretty {
             " ".repeat(indent)
@@ -239,7 +264,7 @@ pub fn render_json(
                 .unwrap_or_else(|| "null".to_string()),
             scan.total_files,
             scan.dirs_with_files,
-            node(&scan.root, scan, tree_counts, cli, true, 2)
+            node(&scan.root, scan, tree_counts, cli, true, 2, 0)
         )
     } else {
         format!(
@@ -263,7 +288,7 @@ pub fn render_json(
                 .unwrap_or_else(|| "null".to_string()),
             scan.total_files,
             scan.dirs_with_files,
-            node(&scan.root, scan, tree_counts, cli, false, 0)
+            node(&scan.root, scan, tree_counts, cli, false, 0, 0)
         )
     }
 }
