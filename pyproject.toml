@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "A CLI that displays source file counts in a tree view by directory and language"
 readme = "README.md"
 requires-python = ">=3.8"
-license = { file = "MIT" }
+license = { file = "LICENSE" }
 authors = [
   { name = "chouzz" }
 ]
