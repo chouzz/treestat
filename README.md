@@ -1,38 +1,48 @@
 # treestat
 
-`treestat` is a Rust CLI tool that prints a `tree`-style directory view and shows only one number per directory: matching files `(N files)`.
+[![Crates.io](https://img.shields.io/crates/v/treestat?label=crates.io)](https://crates.io/crates/treestat)
+[![PyPI](https://img.shields.io/pypi/v/treestat-cli.svg?label=PyPI)](https://pypi.org/project/treestat-cli/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-- Filter by language presets (`--lang`) or custom extensions (`--ext`).
-- Choose counting mode: direct files only (`direct`) or full subtree (`tree`).
-- Output as human-readable text or stable JSON for CI and scripts.
+Command-line tool that shows **source file counts per directory and language** in a tree view.
 
-## Installation
+- **Flexible filtering**: language presets via `--lang` or custom extensions via `--ext`.
+- **Configurable counting**: only direct files in each directory (`direct`) or full subtree aggregation (`tree`).
+- **Script‑friendly output**: human‑readable text or stable JSON for CI, dashboards, and scripts.
 
-The recommended way to install `treestat` is to use `uv` so that it is managed as a Python tool.
+---
 
+## ⚙️ Installation
+
+The recommended way to install `treestat` is via **uv** so that it is managed as a Python tool:
 
 ```bash
-uv tool install treestat
+uv tool install treestat-cli
 ```
-or 
+
+Or install from PyPI:
 
 ```bash
-pip install treestat
-
+pip install treestat-cli
 ```
-If you prefer to install it directly with Rust, you can still use:
+
+You can also install the native Rust binary from crates.io:
 
 ```bash
 cargo install treestat
 ```
 
-## Quick Start
+---
+
+## 🚀 Usage
+
+Count C/C++ files up to depth 3 under the current directory:
 
 ```bash
 treestat . --lang c,cpp --max-depth 3
 ```
 
-Example output:
+Example (text) output:
 
 ```text
 all file statistics (Tree View):
@@ -65,8 +75,15 @@ Directories containing files: 6516
 Extensions: c,js,cpp,py
 ```
 
+To get JSON for automation:
 
-## CLI
+```bash
+treestat . --lang rust --format json --json-pretty
+```
+
+---
+
+## 📚 CLI reference
 
 ```text
 treestat [PATH] [OPTIONS]
@@ -87,39 +104,41 @@ treestat [PATH] [OPTIONS]
 - `--format <text|json>`: output format (default: `text`)
 - `--json-pretty`: pretty-print JSON
 
-## Default Behavior
+---
 
-- `.gitignore` patterns are enabled by default.
-- Hidden entries are excluded by default unless `--hidden` is set.
+## ⚖️ Default behavior
+
+- `.gitignore` patterns are **enabled by default**.
+- Hidden entries are **excluded by default** unless `--hidden` is set.
 - Common build/output directories are excluded by default:
   `.git`, `target`, `build`, `out`, `node_modules`, `third_party`, `dist`.
-- `dirs_with_files` does not include the root directory.
+- `dirs_with_files` does **not** include the root directory.
 
-## JSON Output Example
+---
 
-```json
-{
-  "root": "project",
-  "path": "/abs/path/project",
-  "count_mode": "tree",
-  "lang": "c,c++",
-  "extensions": ["c", "cc", "cpp", "cxx", "h", "hh", "hpp", "hxx"],
-  "max_depth": 3,
-  "total_files": 333,
-  "dirs_with_files": 6,
-  "tree": {
-    "name": "project",
-    "path": "/abs/path/project",
-    "files": 333,
-    "children": []
-  }
-}
-```
-
-## Development
+## 🧪 Development
 
 ```bash
 cargo fmt
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
+
+---
+
+## 📜 License
+
+MIT License. See `LICENSE` for details.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+---
+
+## 📞 Support
+
+- GitHub Issues: [Report a bug](https://github.com/chouzz/treestat/issues)
+- GitHub README: [View the latest docs](https://github.com/chouzz/treestat#readme)
