@@ -50,6 +50,36 @@ fn text_tree_output_for_rust() {
 }
 
 #[test]
+fn max_depth_limits_tree_but_not_counts() {
+    let root = make_temp_dir();
+    write(&root.join("src/main.rs"), "fn main(){}\n");
+    write(&root.join("src/nested/lib.rs"), "pub fn a(){}\n");
+    write(&root.join("src/nested/deeper/mod.rs"), "pub fn b(){}\n");
+
+    let out = Command::new(bin_path())
+        .arg(&root)
+        .arg("--lang")
+        .arg("rust")
+        .arg("--count-mode")
+        .arg("tree")
+        .arg("--max-depth")
+        .arg("1")
+        .output()
+        .unwrap();
+
+    assert!(out.status.success());
+    let s = String::from_utf8_lossy(&out.stdout);
+    // 所有 Rust 文件都会被递归统计到 total_files 里
+    assert!(s.contains("Total matching files: 3"));
+    // 根下的 src 目录展示的是整个子树的文件数（3 个）
+    assert!(s.contains("src/ (3 files)"));
+    // 但因为 max-depth=1，嵌套子目录不应该出现在树形输出里
+    assert!(!s.contains("nested/ ("));
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn json_output_shape() {
     let root = make_temp_dir();
     write(&root.join("pkg/a.py"), "print(1)\n");
