@@ -1,0 +1,24 @@
+[build-system]
+requires = ["maturin>=1.6,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "treestat"
+version = "0.1.0"
+description = "A tree-style CLI that counts language-selected source files per directory"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+  { name = "treestat contributors" }
+]
+keywords = ["cli", "trees", "code", "files", "rust"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Rust",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[tool.maturin]
+bindings = "bin"

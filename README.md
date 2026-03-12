@@ -8,6 +8,20 @@
 
 ## Installation
 
+The recommended way to install `treestat` is to use `uv` so that it is managed as a Python tool.
+
+
+```bash
+uv tool install treestat
+```
+or 
+
+```bash
+pip install treestat
+
+```
+If you prefer to install it directly with Rust, you can still use:
+
 ```bash
 cargo install treestat
 ```
@@ -15,20 +29,42 @@ cargo install treestat
 ## Quick Start
 
 ```bash
-treestat . --lang c,cpp
+treestat . --lang c,cpp --max-depth 3
 ```
 
-```bash
-treestat . --lang rust --count-mode direct --max-depth 3
+Example output:
+
+```text
+all file statistics (Tree View):
+============================================================
+llvm-project/ (52970 files)
+├── bolt/ (241 files)
+├── clang/ (18264 files)
+├── clang-tools-extra/ (3003 files)
+├── compiler-rt/ (3417 files)
+├── cross-project-tests/ (228 files)
+├── flang/ (665 files)
+├── libc/ (1959 files)
+├── libclc/ (248 files)
+├── libcxx/ (9179 files)
+├── libcxxabi/ (105 files)
+├── libunwind/ (43 files)
+├── lld/ (219 files)
+├── lldb/ (4765 files)
+├── llvm/ (6866 files)
+├── llvm-libgcc/ (2 files)
+├── mlir/ (1873 files)
+├── openmp/ (744 files)
+├── polly/ (893 files)
+├── pstl/ (97 files)
+├── third-party/ (154 files)
+└── utils/ (5 files)
+============================================================
+Total matching files: 52970
+Directories containing files: 6516
+Extensions: c,js,cpp,py
 ```
 
-```bash
-treestat . --ext c,cc,cpp,h,hpp --headers exclude
-```
-
-```bash
-treestat . --lang python --format json --json-pretty
-```
 
 ## CLI
 
