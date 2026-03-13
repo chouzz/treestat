@@ -12,6 +12,7 @@ use render::{render_json, render_text};
 use scanner::{compute_tree_counts, scan_tree};
 
 pub fn run(cli: Cli) -> Result<String, String> {
+    let start = std::time::Instant::now();
     let root = cli
         .path
         .canonicalize()
@@ -33,15 +34,19 @@ pub fn run(cli: Cli) -> Result<String, String> {
 
     let scan = scan_tree(Path::new(&root), &extensions, &cli, &gitignore_patterns)?;
     let tree_counts = compute_tree_counts(Path::new(&scan.root), &scan.dirs);
+    let duration_secs = start.elapsed().as_secs_f64();
 
     let output = match cli.format {
-        Format::Text => render_text(&scan, &tree_counts, &extensions, &cli.langs, &cli),
+        Format::Text => {
+            render_text(&scan, &tree_counts, &extensions, &cli.langs, &cli, duration_secs)
+        }
         Format::Json => render_json(
             &scan,
             &tree_counts,
             &extensions,
             &cli.langs,
             &cli,
+            duration_secs,
             cli.json_pretty,
         ),
     };

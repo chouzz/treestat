@@ -44,7 +44,7 @@ fn text_tree_output_for_rust() {
     assert!(out.status.success());
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("Total matching files: 3"));
-    assert!(s.contains("src/ (2 files)"));
+    assert!(s.contains("src/ (2)"));
 
     let _ = fs::remove_dir_all(root);
 }
@@ -72,7 +72,7 @@ fn max_depth_limits_tree_but_not_counts() {
     // 所有 Rust 文件都会被递归统计到 total_files 里
     assert!(s.contains("Total matching files: 3"));
     // 根下的 src 目录展示的是整个子树的文件数（3 个）
-    assert!(s.contains("src/ (3 files)"));
+    assert!(s.contains("src/ (3)"));
     // 但因为 max-depth=1，嵌套子目录不应该出现在树形输出里
     assert!(!s.contains("nested/ ("));
 

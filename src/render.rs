@@ -59,6 +59,7 @@ pub fn render_text(
     extensions: &HashSet<String>,
     langs: &[String],
     cli: &Cli,
+    duration_secs: f64,
 ) -> String {
     let mut out = String::new();
     let title = format!("{} file statistics (Tree View):", display_langs(langs));
@@ -72,7 +73,7 @@ pub fn render_text(
         .unwrap_or_else(|| OsStr::new("."))
         .to_string_lossy();
     out.push_str(&format!(
-        "{root_name}/ ({} files)\n",
+        "{root_name}/ ({})\n",
         display_count(&scan.root, scan, tree_counts, cli.count_mode)
     ));
 
@@ -107,6 +108,16 @@ pub fn render_text(
     let mut exts = extensions.iter().cloned().collect::<Vec<_>>();
     exts.sort();
     out.push_str(&format!("Extensions: {}\n", exts.join(",")));
+
+    let files_per_sec = if duration_secs > 0.0 {
+        scan.total_files as f64 / duration_secs
+    } else {
+        0.0
+    };
+    out.push_str(&format!(
+        "Scan time: {:.2} s, {:.2} files/s\n",
+        duration_secs, files_per_sec
+    ));
     out
 }
 
@@ -125,7 +136,7 @@ fn render_text_node(
     };
     let connector = if is_last { "└── " } else { "├── " };
     out.push_str(&format!(
-        "{prefix}{connector}{}/ ({} files)\n",
+        "{prefix}{connector}{}/ ({})\n",
         dir.name,
         display_count(path, scan, tree_counts, cli.count_mode)
     ));
@@ -165,6 +176,7 @@ pub fn render_json(
     extensions: &HashSet<String>,
     langs: &[String],
     cli: &Cli,
+    _duration_secs: f64,
     pretty: bool,
 ) -> String {
     fn node(
