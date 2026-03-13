@@ -51,8 +51,12 @@ jobs:
       - name: Cache cargo files
         uses: Swatinem/rust-cache@v2
 
-      - name: Build package
-        run: uv build
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          command: build
+          args: --release --out dist
+          manylinux: auto
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
